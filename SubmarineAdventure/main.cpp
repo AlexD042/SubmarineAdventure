@@ -2,5 +2,9 @@
 
 int main() {
 	Position game;
-	game.displayEntireLevel();
+	Submarine s;
+	std::cout << "*******************************\n";
+	std::cout << "Welcome to Submarine Adventure!\n";
+	std::cout << "*******************************\n\n";
+	game.displayEntireLevel(s);
 }
