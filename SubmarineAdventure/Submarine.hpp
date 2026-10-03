@@ -20,9 +20,9 @@ public:
 		row++;
 	}
 	void moveRight() {
-		column--;
+		column++;
 	}
 	void moveLeft() {
-		column++;
+		column--;
 	}
 };
