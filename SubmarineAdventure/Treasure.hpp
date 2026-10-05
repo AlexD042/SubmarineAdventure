@@ -7,16 +7,8 @@ private:
 	std::string name;
 	int value;
 public:
-	Treasure(std::string n, int v) {
-		name = n;
-		value = v;
-	}
+	Treasure(std::string n, int v);
 	
-	std::string getName() {
-		return name;
-	}
-	
-	int getValue() {
-		return value;
-	}
+	std::string getName();
+	int getValue();
 };
