@@ -55,14 +55,14 @@ int main() {
 					std::cout << "Your submarine has run out of oxygen. GAME OVER!\n";
 					std::cout << "Total Earnings: $" << s.getTotalEarnings() << "\n\n";
 
-					// Pause so the user can read their score before going back to the menu
+					// Pause so the user can read their score
 					std::cout << "Press Enter to return to the main menu...";
 					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 					std::cin.get();
 
-					std::system("cls"); // Clear screen for the main menu
+					std::system("cls");
 					isRunning = false;
-					break; // Breaks the inner loop, returning to the main menu loop
+					break; // return to the main menu
 				}
 
 				int submarineRow = s.getRow();
