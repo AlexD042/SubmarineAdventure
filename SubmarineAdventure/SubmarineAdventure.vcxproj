@@ -141,10 +141,13 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Position.cpp" />
+    <ClCompile Include="Submarine.cpp" />
+    <ClCompile Include="Treasure.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Position.hpp" />
     <ClInclude Include="Submarine.hpp" />
+    <ClInclude Include="Treasure.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
