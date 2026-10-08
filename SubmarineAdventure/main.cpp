@@ -20,30 +20,43 @@ int main() {
 		std::cout << "Welcome to Submarine Adventure!\n";
 		std::cout << "*******************************\n\n";
 		std::cout << "1. Start Game\n";
-		std::cout << "2. Quit\n\n";
-		std::cout << "Enter choice: ";
+		std::cout << "2. Quit Game\n\n";
+		std::cout << "Enter choice (enter either '1' or '2'): ";
 
 		std::string menuChoice;
 		std::cin >> menuChoice;
 
-		if (menuChoice == "2" || menuChoice == "quit" || menuChoice == "Quit") {
+		if (menuChoice == "2") {
 			std::cout << "Thanks for playing!\n";
 			appRunning = false;
 			break;
 		}
-		else if (menuChoice == "1" || menuChoice == "start" || menuChoice == "Start") {
+		else if (menuChoice == "1") {
 
 			std::system("cls");
 
 			bool isRunning = true;
 			Position game;
 			Submarine s;
+
+			// Treasure objects
 			std::vector<Treasure> possibleTreasures = { Treasure("Gold Coin", 15),
 														Treasure("Silver Band", 5) ,
 														Treasure("Bejeweled Crown", 50) ,
 														Treasure("Diamond of the Ocean", 100) ,
 														Treasure("Rock", 1) };
+			// Submarine cargo
 			std::vector<Treasure> treasuresFound = { };
+
+			// Non-treasure objects
+			std::vector<std::string> sceneryObjects = { "an ancient skeleton",
+														"a rusted ship anchor",
+														"a bed of coral",
+														"some glowing underwater crystals",
+														"an empty diving suit" };
+
+			// Keep track of which scenery spawned at each map coordinate
+			std::string assignedScenery[10][10];
 
 			game.displayLevelCamera(s);
 			std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
@@ -55,7 +68,7 @@ int main() {
 					std::cout << "Your submarine has run out of oxygen. GAME OVER!\n";
 					std::cout << "Total Earnings: $" << s.getTotalEarnings() << "\n\n";
 
-					// Pause so the user can read their score
+					// Pause so user can read
 					std::cout << "Press Enter to return to the main menu...";
 					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 					std::cin.get();
@@ -92,10 +105,10 @@ int main() {
 					continue;
 				}
 
-				// Move
+				// Move Up
 				if (move == "W") {
-					if (submarineRow == 0 || game.charAt(submarineRow - 1, submarineColumn) == '#' || game.charAt(submarineRow - 1, submarineColumn) == '*') {
-						std::cout << "You can't move into a wall or off map! Try again!\n";
+					if (submarineRow == 0 || game.charAt(submarineRow - 1, submarineColumn) == '#' || game.charAt(submarineRow - 1, submarineColumn) == '*' || game.charAt(submarineRow - 1, submarineColumn) == '^') {
+						std::cout << "You can't move into an obstacle or off map! Try again!\n";
 						std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
 					}
 					else if (submarineRow == 1) { // RETURNING TO THE SURFACE
@@ -133,9 +146,10 @@ int main() {
 						std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
 					}
 				}
+				// Move left
 				else if (move == "A") {
-					if (submarineColumn == 0 || game.charAt(submarineRow, submarineColumn - 1) == '#' || game.charAt(submarineRow, submarineColumn - 1) == '*') {
-						std::cout << "You can't move into a wall or off the map! Try again!\n";
+					if (submarineColumn == 0 || game.charAt(submarineRow, submarineColumn - 1) == '#' || game.charAt(submarineRow, submarineColumn - 1) == '*' || game.charAt(submarineRow, submarineColumn - 1) == '^') {
+						std::cout << "You can't move into an obstacle or off the map! Try again!\n";
 						std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
 					}
 					else if (submarineRow == 0) {
@@ -152,9 +166,10 @@ int main() {
 						std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
 					}
 				}
+				// Move down
 				else if (move == "S") {
-					if (submarineRow == 9 || game.charAt(submarineRow + 1, submarineColumn) == '#' || game.charAt(submarineRow + 1, submarineColumn) == '*') {
-						std::cout << "You can't move into a wall or off the map! Try again!\n";
+					if (submarineRow == 9 || game.charAt(submarineRow + 1, submarineColumn) == '#' || game.charAt(submarineRow + 1, submarineColumn) == '*' || game.charAt(submarineRow + 1, submarineColumn) == '^') {
+						std::cout << "You can't move into an obstacle or off the map! Try again!\n";
 						std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
 					}
 					else {
@@ -165,9 +180,10 @@ int main() {
 						std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
 					}
 				}
+				// Move right
 				else if (move == "D") {
-					if (submarineColumn == 9 || game.charAt(submarineRow, submarineColumn + 1) == '#' || game.charAt(submarineRow, submarineColumn + 1) == '*') {
-						std::cout << "You can't move into a wall or off the map! Try again!\n";
+					if (submarineColumn == 9 || game.charAt(submarineRow, submarineColumn + 1) == '#' || game.charAt(submarineRow, submarineColumn + 1) == '*' || game.charAt(submarineRow, submarineColumn + 1) == '^') {
+						std::cout << "You can't move into an obstacle or off the map! Try again!\n";
 						std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
 					}
 					else if (submarineRow == 0) {
@@ -184,46 +200,61 @@ int main() {
 						std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
 					}
 				}
+				// Inspecting move
 				else if (move == "INSPECT") {
-					std::cout << "\nYou inspect the area around your submarine...";
+					std::system("cls");
+					game.displayLevelCamera(s);
+					std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
+					std::cout << "You inspect the area around your submarine...\n\n";
 
 					int startRow = submarineRow - 1;
 					int startColumn = submarineColumn - 1;
 
-					bool treasureFound = false;
+					bool foundSomething = false;
 
+					// Look at 3x3 grid around submarine
 					for (int i = 0; i < 3; i++) {
 						for (int j = 0; j < 3; j++) {
 							int currentRow = startRow + i;
 							int currentColumn = startColumn + j;
 
 							if (currentRow >= 0 && currentRow <= 9 && currentColumn >= 0 && currentColumn <= 9) {
+
+								// Inspecting treasure (*)
 								if (game.charAt(currentRow, currentColumn) == '*' && !possibleTreasures.empty()) {
-									treasureFound = true;
-									game.setCharAt(currentRow, currentColumn, ' ');
+									foundSomething = true;
+									game.setCharAt(currentRow, currentColumn, ' '); // Remove from map
 									int randomNumber = std::rand() % possibleTreasures.size();
 
-									std::system("cls");
-									game.displayLevelCamera(s);
-									std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
-									std::cout << "\nYou found: " << possibleTreasures[randomNumber].getName() << " (Value: $" << possibleTreasures[randomNumber].getValue() << ")\n\n";
+									std::cout << " - You found treasure: " << possibleTreasures[randomNumber].getName() << " (Value: $" << possibleTreasures[randomNumber].getValue() << ")\n";
 
 									treasuresFound.push_back(possibleTreasures[randomNumber]);
 									possibleTreasures.erase(possibleTreasures.begin() + randomNumber);
 								}
+								// Inspecting non-treasure (^)
+								else if (game.charAt(currentRow, currentColumn) == '^') {
+									foundSomething = true;
+
+									// If this coordinate hasn't been assigned yet, assign it
+									if (assignedScenery[currentRow][currentColumn].empty()) {
+										int randomScenery = std::rand() % sceneryObjects.size();
+										assignedScenery[currentRow][currentColumn] = sceneryObjects[randomScenery];
+									}
+									std::cout << " - You investigate a strange object... You find " << assignedScenery[currentRow][currentColumn] << ".\n";
+								}
 							}
 						}
 					}
-					if (treasureFound) {
-						treasureFound = false;
+
+					if (!foundSomething) {
+						std::cout << "...but there was nothing to be found.\n";
 					}
-					else {
-						std::cout << " ...but there was nothing to be found.\n\n\n";
-					}
+					std::cout << "\n";
 				}
 			}
 		}
 		else {
+			std::system("cls");
 			std::cout << "Invalid choice. Please try again.\n\n";
 		}
 	}
