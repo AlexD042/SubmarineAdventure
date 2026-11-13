@@ -1,5 +1,6 @@
 #include "Position.hpp"
 #include "Treasure.hpp"
+#include "Levels.hpp"
 #include <iostream>
 #include <string>
 #include <cctype>
@@ -36,7 +37,15 @@ int main() {
 			std::system("cls");
 
 			bool isRunning = true;
-			Position game;
+
+			Position map[2][3] = { { Position(levelAreaR0C0), Position(levelAreaR0C1), Position(levelAreaR0C2) },
+								   { Position(levelAreaR1C0), Position(levelAreaR1C1), Position(levelAreaR1C2) }
+			}; // map has 6 areas -> 2 rows and 3 columns
+
+			int currentAreaRow = 0;
+			int currentAreaColumn = 1; // starting area
+
+			Position* currentArea = &map[currentAreaRow][currentAreaColumn];
 			Submarine s;
 
 			// Treasure objects
@@ -58,7 +67,7 @@ int main() {
 			// Keep track of which scenery spawned at each map coordinate
 			std::string assignedScenery[10][10];
 
-			game.displayLevelCamera(s);
+			currentArea->displayLevelCamera(s);
 			std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
 
 			// GAME LOOP
@@ -107,15 +116,29 @@ int main() {
 
 				// Move Up
 				if (move == "W") {
-					if (submarineRow == 0 || game.charAt(submarineRow - 1, submarineColumn) == '#' || game.charAt(submarineRow - 1, submarineColumn) == '*' || game.charAt(submarineRow - 1, submarineColumn) == '^') {
-						std::cout << "You can't move into an obstacle or off map! Try again!\n";
-						std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
+					if (submarineRow == 0) {
+						if (currentAreaRow == 1) {
+							currentAreaRow--;
+							currentArea = &map[currentAreaRow][currentAreaColumn];
+
+							s.setRow(9);
+							s.setOxygen(s.getOxygen() - 1);
+
+							std::system("cls");
+							currentArea->displayLevelCamera(s);
+						}
+						else {
+							std::cout << "You can't move off the map! Try again!\n";
+						}
 					}
-					else if (submarineRow == 1) { // RETURNING TO THE SURFACE
+					else if (currentArea->charAt(submarineRow - 1, submarineColumn) == '#' || currentArea->charAt(submarineRow - 1, submarineColumn) == '*' || currentArea->charAt(submarineRow - 1, submarineColumn) == '^') {
+						std::cout << "You can't move into an obstacle! Try again!\n";
+					}
+					else if (submarineRow == 1 && currentAreaRow == 0) {
 						s.moveUp();
 						s.setOxygen(50);
 						std::system("cls");
-						game.displayLevelCamera(s);
+						currentArea->displayLevelCamera(s);
 						std::cout << "You reached the surface!\n";
 						std::cout << "Oxygen refilled.\n\n";
 
@@ -135,75 +158,103 @@ int main() {
 							std::cout << "Earnings this descent: $" << tempEarnings << "\n\n";
 						}
 						std::cout << "Total Earnings: $" << s.getTotalEarnings() << "\n\n";
-						std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
-
 					}
 					else {
 						s.setOxygen(s.getOxygen() - 1);
 						s.moveUp();
 						std::system("cls");
-						game.displayLevelCamera(s);
-						std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
+						currentArea->displayLevelCamera(s);
 					}
+					std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
 				}
 				// Move left
 				else if (move == "A") {
-					if (submarineColumn == 0 || game.charAt(submarineRow, submarineColumn - 1) == '#' || game.charAt(submarineRow, submarineColumn - 1) == '*' || game.charAt(submarineRow, submarineColumn - 1) == '^') {
-						std::cout << "You can't move into an obstacle or off the map! Try again!\n";
-						std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
+					if (submarineColumn == 0) {
+						if (currentAreaColumn == 1 || currentAreaColumn == 2) {
+							currentAreaColumn--;
+							currentArea = &map[currentAreaRow][currentAreaColumn];
+
+							s.setColumn(9);
+							s.setOxygen(s.getOxygen() - 1);
+
+							std::system("cls");
+							currentArea->displayLevelCamera(s);
+						}
+						else {
+							std::cout << "You can't move off the map! Try again!\n";
+						}
 					}
-					else if (submarineRow == 0) {
-						s.moveLeft();
-						std::system("cls");
-						game.displayLevelCamera(s);
-						std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
+					else if (currentArea->charAt(submarineRow, submarineColumn - 1) == '#' || currentArea->charAt(submarineRow, submarineColumn - 1) == '*' || currentArea->charAt(submarineRow, submarineColumn - 1) == '^') {
+						std::cout << "You can't move into an obstacle! Try again!\n";
 					}
 					else {
-						s.setOxygen(s.getOxygen() - 1);
+						if (submarineRow != 0) { s.setOxygen(s.getOxygen() - 1); };
 						s.moveLeft();
 						std::system("cls");
-						game.displayLevelCamera(s);
-						std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
+						currentArea->displayLevelCamera(s);
 					}
+					std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
 				}
 				// Move down
 				else if (move == "S") {
-					if (submarineRow == 9 || game.charAt(submarineRow + 1, submarineColumn) == '#' || game.charAt(submarineRow + 1, submarineColumn) == '*' || game.charAt(submarineRow + 1, submarineColumn) == '^') {
-						std::cout << "You can't move into an obstacle or off the map! Try again!\n";
-						std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
+					if (submarineRow == 9) {
+						if (currentAreaRow == 0) {
+							currentAreaRow++;
+							currentArea = &map[currentAreaRow][currentAreaColumn];
+
+							s.setRow(0);
+							s.setOxygen(s.getOxygen() - 1);
+
+							std::system("cls");
+							currentArea->displayLevelCamera(s);
+						}
+						else {
+							std::cout << "You can't move off the map! Try again!\n";
+						}
+					}
+					else if (currentArea->charAt(submarineRow + 1, submarineColumn) == '#' || currentArea->charAt(submarineRow + 1, submarineColumn) == '*' || currentArea->charAt(submarineRow + 1, submarineColumn) == '^') {
+						std::cout << "You can't move into an obstacle! Try again!\n";
 					}
 					else {
 						s.setOxygen(s.getOxygen() - 1);
 						s.moveDown();
 						std::system("cls");
-						game.displayLevelCamera(s);
-						std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
+						currentArea->displayLevelCamera(s);
 					}
+					std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
 				}
 				// Move right
 				else if (move == "D") {
-					if (submarineColumn == 9 || game.charAt(submarineRow, submarineColumn + 1) == '#' || game.charAt(submarineRow, submarineColumn + 1) == '*' || game.charAt(submarineRow, submarineColumn + 1) == '^') {
-						std::cout << "You can't move into an obstacle or off the map! Try again!\n";
-						std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
+					if (submarineColumn == 9) {
+						if (currentAreaColumn == 0 || currentAreaColumn == 1) {
+							currentAreaColumn--;
+							currentArea = &map[currentAreaRow][currentAreaColumn];
+
+							s.setColumn(0);
+							s.setOxygen(s.getOxygen() - 1);
+
+							std::system("cls");
+							currentArea->displayLevelCamera(s);
+						}
+						else {
+							std::cout << "You can't move off the map! Try again!\n";
+						}
 					}
-					else if (submarineRow == 0) {
-						s.moveRight();
-						std::system("cls");
-						game.displayLevelCamera(s);
-						std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
+					else if (currentArea->charAt(submarineRow, submarineColumn + 1) == '#' || currentArea->charAt(submarineRow, submarineColumn + 1) == '*' || currentArea->charAt(submarineRow, submarineColumn + 1) == '^') {
+						std::cout << "You can't move into an obstacle! Try again!\n";
 					}
 					else {
-						s.setOxygen(s.getOxygen() - 1);
+						if (submarineRow != 0) { s.setOxygen(s.getOxygen() - 1); };
 						s.moveRight();
 						std::system("cls");
-						game.displayLevelCamera(s);
-						std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
+						currentArea->displayLevelCamera(s);
 					}
+					std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
 				}
 				// Inspecting move
 				else if (move == "INSPECT") {
 					std::system("cls");
-					game.displayLevelCamera(s);
+					currentArea->displayLevelCamera(s);
 					std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
 					std::cout << "You inspect the area around your submarine...\n\n";
 
@@ -221,9 +272,9 @@ int main() {
 							if (currentRow >= 0 && currentRow <= 9 && currentColumn >= 0 && currentColumn <= 9) {
 
 								// Inspecting treasure (*)
-								if (game.charAt(currentRow, currentColumn) == '*' && !possibleTreasures.empty()) {
+								if (currentArea->charAt(currentRow, currentColumn) == '*' && !possibleTreasures.empty()) {
 									foundSomething = true;
-									game.setCharAt(currentRow, currentColumn, ' '); // Remove from map
+									currentArea->setCharAt(currentRow, currentColumn, ' '); // Remove from map
 									int randomNumber = std::rand() % possibleTreasures.size();
 
 									std::cout << " - You found treasure: " << possibleTreasures[randomNumber].getName() << " (Value: $" << possibleTreasures[randomNumber].getValue() << ")\n";
@@ -232,7 +283,7 @@ int main() {
 									possibleTreasures.erase(possibleTreasures.begin() + randomNumber);
 								}
 								// Inspecting non-treasure (^)
-								else if (game.charAt(currentRow, currentColumn) == '^') {
+								else if (currentArea->charAt(currentRow, currentColumn) == '^') {
 									foundSomething = true;
 
 									// If this coordinate hasn't been assigned yet, assign it

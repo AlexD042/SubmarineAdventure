@@ -4,24 +4,17 @@
 
 class Position {
 private:
-	// Default Start Position
-	// '~' = Surface of the water
-	// ' ' = Open water
-	// '#' = Wall or floor
-	// '*' = Treasure
-	char level[10][10] = { { '~', '~', '~', '~', '~', '~', '~', '~', '~', '~' }, // row 0
-						   { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' }, // row 1
-						   { '*', '#', ' ', ' ', ' ', ' ', '*', ' ', ' ', ' ' }, // row 2
-						   { '#', '#', '#', ' ', ' ', ' ', '#', ' ', ' ', ' ' }, // row 3
-						   { '#', '#', '#', '#', ' ', ' ', '#', ' ', ' ', ' ' }, // row 4
-						   { '#', '#', '^', '#', ' ', ' ', '#', '^', ' ', ' ' }, // row 5
-						   { '#', ' ', ' ', ' ', ' ', '#', '#', '#', ' ', ' ' }, // row 6
-						   { '#', '*', ' ', ' ', '*', '#', '#', '#', ' ', ' ' }, // row 7
-						   { '#', '#', '#', '^', '#', '#', '#', '#', '#', '*' }, // row 8
-						   { '#', '#', '#', '#', '#', '#', '#', '#', '#', '#' }  // row 9
-	}; //    Columns   -->    0    1    2    3    4    5    6    7    8    9
+	char levelArea[10][10];
 
 public:
+	Position(char l[10][10]) {
+		for (int i = 0; i < 10; ++i) {
+			for (int j = 0; j < 10; ++j) {
+				levelArea[i][j] = l[i][j];
+			}
+		}
+	};
+
 	void displayEntireLevel(Submarine& s); // display whole level
 	void displayLevelCamera(Submarine& s); //display 5x5 grid of level around submarine
 	char charAt(int row, int column); // return a char at a location

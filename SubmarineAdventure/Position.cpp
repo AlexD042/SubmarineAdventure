@@ -15,7 +15,7 @@ void Position::displayEntireLevel(Submarine& s) {
 				std::cout << "@ ";
 			}
 			else {
-				std::cout << level[row][column] << ' ';
+				std::cout << levelArea[row][column] << ' ';
 			}
 		}
 		std::cout << "|\n";
@@ -56,7 +56,7 @@ void Position::displayLevelCamera(Submarine& s) {
 				std::cout << "@ ";
 			}
 			else {
-				std::cout << level[currentRow][currentColumn] << ' ';
+				std::cout << levelArea[currentRow][currentColumn] << ' ';
 			}
 		}
 		std::cout << "|\n";
@@ -65,9 +65,9 @@ void Position::displayLevelCamera(Submarine& s) {
 }
 
 char Position::charAt(int row, int column) {
-	return level[row][column];
+	return levelArea[row][column];
 }
 
 void Position::setCharAt(int row, int column, char newChar) {
-	level[row][column] = newChar;
+	levelArea[row][column] = newChar;
 }

@@ -145,6 +145,7 @@
     <ClCompile Include="Treasure.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Levels.hpp" />
     <ClInclude Include="Position.hpp" />
     <ClInclude Include="Submarine.hpp" />
     <ClInclude Include="Treasure.hpp" />
