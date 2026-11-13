@@ -3,6 +3,7 @@
 #include "Submarine.hpp"
 
 #include <vector>
+#include <string>
 
 struct Door {
 	int row;
@@ -46,5 +47,5 @@ public:
 	void addDoor(int row, int column, int index);
 	void addLever(int row, int column, int index);
 	int getDoorIndex(int row, int column);
-	void toggleLever(int row, int column);
+	std::string toggleLever(int row, int column);
 };

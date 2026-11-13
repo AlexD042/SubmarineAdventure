@@ -84,19 +84,17 @@ void Position::addLever(int row, int column, int index) {
 	levers.push_back(Lever(row, column, index, false));
 }
 
-void Position::toggleLever(int row, int column) {
+std::string Position::toggleLever(int r, int c) {
 	for (Lever& l : levers) {
-		if (l.row == row && l.column == column) {
+		if (l.row == r && l.column == c) {
 
 			l.isActivated = !l.isActivated;
 
 			if (l.isActivated) {
-				setCharAt(row, column, '/');
-				std::cout << "Lever " << l.index << " used! Corresponding doors have opened.\n";
+				setCharAt(r, c, '/');
 			}
 			else {
-				setCharAt(row, column, '\\');
-				std::cout << "Lever " << l.index << " used! Corresponding doors have closed.\n";
+				setCharAt(r, c, '\\');
 			}
 
 			for (Door& d : doors) {
@@ -109,9 +107,16 @@ void Position::toggleLever(int row, int column) {
 					}
 				}
 			}
-			return;
+
+			if (l.isActivated) {
+				return "Lever " + std::to_string(l.index) + " used! Corresponding doors have opened.";
+			}
+			else {
+				return "Lever " + std::to_string(l.index) + " used! Corresponding doors have closed.";
+			}
 		}
 	}
+	return "";
 }
 
 int Position::getDoorIndex(int row, int column) {

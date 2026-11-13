@@ -282,15 +282,13 @@ int main() {
 				}
 				// Inspecting move
 				else if (move == "INSPECT") {
-					std::system("cls");
-					currentArea->displayLevelCamera(s);
-					std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
-					std::cout << "You inspect the area around your submarine...\n\n";
-
 					int startRow = submarineRow - 1;
 					int startColumn = submarineColumn - 1;
 
 					bool foundSomething = false;
+
+					std::vector<std::string> outputMessage;
+					std::vector<int> doorsAlreadyInspected;
 
 					// Look at 3x3 grid around submarine
 					for (int i = 0; i < 3; i++) {
@@ -300,13 +298,15 @@ int main() {
 
 							if (currentRow >= 0 && currentRow <= 9 && currentColumn >= 0 && currentColumn <= 9) {
 								char inspectedChar = currentArea->charAt(currentRow, currentColumn);
+
 								// Inspecting treasure (*)
 								if (inspectedChar == '*' && !possibleTreasures.empty()) {
 									foundSomething = true;
 									currentArea->setCharAt(currentRow, currentColumn, ' '); // Remove from map
 									int randomNumber = std::rand() % possibleTreasures.size();
 
-									std::cout << " - You found treasure: " << possibleTreasures[randomNumber].getName() << " (Value: $" << possibleTreasures[randomNumber].getValue() << ")\n";
+									outputMessage.push_back(" - You found treasure: " + possibleTreasures[randomNumber].getName() +
+										" (Value: $" + std::to_string(possibleTreasures[randomNumber].getValue()) + ")");
 
 									treasuresFound.push_back(possibleTreasures[randomNumber]);
 									possibleTreasures.erase(possibleTreasures.begin() + randomNumber);
@@ -315,33 +315,56 @@ int main() {
 								else if (inspectedChar == '^') {
 									foundSomething = true;
 
-									// If this coordinate hasn't been assigned yet, assign it
 									if (assignedScenery[currentRow][currentColumn].empty()) {
 										int randomScenery = std::rand() % sceneryObjects.size();
 										assignedScenery[currentRow][currentColumn] = sceneryObjects[randomScenery];
 									}
-									std::cout << " - You investigate a strange object... You find " << assignedScenery[currentRow][currentColumn] << ".\n";
+
+									outputMessage.push_back(" - You investigate a strange object... You find " + assignedScenery[currentRow][currentColumn] + ".");
 								}
-								// Inspecting Deactivated Lever (\)
+								// Inspecting a door (|)
 								else if (inspectedChar == '|') {
 									foundSomething = true;
-									int doorId = currentArea->getDoorIndex(currentRow, currentColumn);
-									std::cout << " - There is closed door with the number " << doorId << " on it.\n";
+									int doorIndex = currentArea->getDoorIndex(currentRow, currentColumn);
+
+									bool alreadyFound = false;
+									for (int index : doorsAlreadyInspected) {
+										if (index == doorIndex) {
+											alreadyFound = true;
+											break;
+										}
+									}
+
+									if (!alreadyFound) {
+										doorsAlreadyInspected.push_back(doorIndex); // Keep track of if we looked at a door already so the message is only displayed one time
+										outputMessage.push_back(" - There is a closed door with the number " + std::to_string(doorIndex) + " on it.");
+									}
 								}
 								// Inspecting a Lever ('\' or '/')
 								else if (inspectedChar == '\\' || inspectedChar == '/') {
 									foundSomething = true;
-									currentArea->toggleLever(currentRow, currentColumn);
+									std::string leverMessage = currentArea->toggleLever(currentRow, currentColumn);
+
+									outputMessage.push_back(leverMessage);
 								}
 							}
 						}
 					}
+					std::system("cls");
+					currentArea->displayLevelCamera(s);
+					std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
 
+					std::cout << "You inspect the area around your submarine...\n\n";
 					if (!foundSomething) {
 						std::cout << "...but there was nothing to be found.\n";
 					}
+					else {
+						for (std::string text : outputMessage) {
+							std::cout << text << "\n";
+						}
+					}
 					std::cout << "\n";
-				}
+					}
 			}
 		}
 		else {
