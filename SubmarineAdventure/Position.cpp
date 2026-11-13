@@ -71,3 +71,54 @@ char Position::charAt(int row, int column) {
 void Position::setCharAt(int row, int column, char newChar) {
 	levelArea[row][column] = newChar;
 }
+
+bool Position::isObstacle(int row, int column) {
+	char c = charAt(row, column);
+	return (c == '#' || c == '*' || c == '^' || c == '|' || c == '\\' || c == '/');
+}
+
+void Position::addDoor(int row, int column, int index) {
+	doors.push_back(Door(row, column, index));
+}
+void Position::addLever(int row, int column, int index) {
+	levers.push_back(Lever(row, column, index, false));
+}
+
+void Position::toggleLever(int row, int column) {
+	for (Lever& l : levers) {
+		if (l.row == row && l.column == column) {
+
+			l.isActivated = !l.isActivated;
+
+			if (l.isActivated) {
+				setCharAt(row, column, '/');
+				std::cout << "Lever " << l.index << " used! Corresponding doors have opened.\n";
+			}
+			else {
+				setCharAt(row, column, '\\');
+				std::cout << "Lever " << l.index << " used! Corresponding doors have closed.\n";
+			}
+
+			for (Door& d : doors) {
+				if (d.index == l.index) {
+					if (l.isActivated) {
+						setCharAt(d.row, d.column, ' ');
+					}
+					else {
+						setCharAt(d.row, d.column, '|');
+					}
+				}
+			}
+			return;
+		}
+	}
+}
+
+int Position::getDoorIndex(int row, int column) {
+	for (Door& d : doors) {
+		if (d.row == row && d.column == column) {
+			return d.index;
+		}
+	}
+	return -1;
+}

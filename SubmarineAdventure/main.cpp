@@ -67,6 +67,11 @@ int main() {
 			// Keep track of which scenery spawned at each map coordinate
 			std::string assignedScenery[10][10];
 
+			map[1][2].addDoor(4, 4, 1);
+			map[1][2].addDoor(5, 4, 1);
+			map[1][2].addDoor(6, 4, 1);
+			map[1][2].addLever(7, 6, 1);
+
 			currentArea->displayLevelCamera(s);
 			std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
 
@@ -131,8 +136,14 @@ int main() {
 							std::cout << "You can't move off the map! Try again!\n";
 						}
 					}
-					else if (currentArea->charAt(submarineRow - 1, submarineColumn) == '#' || currentArea->charAt(submarineRow - 1, submarineColumn) == '*' || currentArea->charAt(submarineRow - 1, submarineColumn) == '^') {
+					else if (currentArea->isObstacle(submarineRow - 1, submarineColumn)) {
 						std::cout << "You can't move into an obstacle! Try again!\n";
+					}
+					else if (currentArea->charAt(submarineRow - 1, submarineColumn) == 'O') {
+						s.setOxygen(50);
+						s.moveUp();
+						std::system("cls");
+						currentArea->displayLevelCamera(s);
 					}
 					else if (submarineRow == 1 && currentAreaRow == 0) {
 						s.moveUp();
@@ -184,8 +195,14 @@ int main() {
 							std::cout << "You can't move off the map! Try again!\n";
 						}
 					}
-					else if (currentArea->charAt(submarineRow, submarineColumn - 1) == '#' || currentArea->charAt(submarineRow, submarineColumn - 1) == '*' || currentArea->charAt(submarineRow, submarineColumn - 1) == '^') {
+					else if (currentArea->isObstacle(submarineRow, submarineColumn - 1)) {
 						std::cout << "You can't move into an obstacle! Try again!\n";
+					}
+					else if (currentArea->charAt(submarineRow, submarineColumn - 1) == 'O') {
+						s.setOxygen(50);
+						s.moveLeft();
+						std::system("cls");
+						currentArea->displayLevelCamera(s);
 					}
 					else {
 						if (submarineRow != 0) { s.setOxygen(s.getOxygen() - 1); };
@@ -212,8 +229,14 @@ int main() {
 							std::cout << "You can't move off the map! Try again!\n";
 						}
 					}
-					else if (currentArea->charAt(submarineRow + 1, submarineColumn) == '#' || currentArea->charAt(submarineRow + 1, submarineColumn) == '*' || currentArea->charAt(submarineRow + 1, submarineColumn) == '^') {
+					else if (currentArea->isObstacle(submarineRow + 1, submarineColumn)) {
 						std::cout << "You can't move into an obstacle! Try again!\n";
+					}
+					else if (currentArea->charAt(submarineRow + 1, submarineColumn) == 'O') {
+						s.setOxygen(50);
+						s.moveDown();
+						std::system("cls");
+						currentArea->displayLevelCamera(s);
 					}
 					else {
 						s.setOxygen(s.getOxygen() - 1);
@@ -227,7 +250,7 @@ int main() {
 				else if (move == "D") {
 					if (submarineColumn == 9) {
 						if (currentAreaColumn == 0 || currentAreaColumn == 1) {
-							currentAreaColumn--;
+							currentAreaColumn++;
 							currentArea = &map[currentAreaRow][currentAreaColumn];
 
 							s.setColumn(0);
@@ -240,8 +263,14 @@ int main() {
 							std::cout << "You can't move off the map! Try again!\n";
 						}
 					}
-					else if (currentArea->charAt(submarineRow, submarineColumn + 1) == '#' || currentArea->charAt(submarineRow, submarineColumn + 1) == '*' || currentArea->charAt(submarineRow, submarineColumn + 1) == '^') {
+					else if (currentArea->isObstacle(submarineRow, submarineColumn + 1)) {
 						std::cout << "You can't move into an obstacle! Try again!\n";
+					}
+					else if (currentArea->charAt(submarineRow, submarineColumn + 1) == 'O') {
+						s.setOxygen(50);
+						s.moveRight();
+						std::system("cls");
+						currentArea->displayLevelCamera(s);
 					}
 					else {
 						if (submarineRow != 0) { s.setOxygen(s.getOxygen() - 1); };
@@ -270,9 +299,9 @@ int main() {
 							int currentColumn = startColumn + j;
 
 							if (currentRow >= 0 && currentRow <= 9 && currentColumn >= 0 && currentColumn <= 9) {
-
+								char inspectedChar = currentArea->charAt(currentRow, currentColumn);
 								// Inspecting treasure (*)
-								if (currentArea->charAt(currentRow, currentColumn) == '*' && !possibleTreasures.empty()) {
+								if (inspectedChar == '*' && !possibleTreasures.empty()) {
 									foundSomething = true;
 									currentArea->setCharAt(currentRow, currentColumn, ' '); // Remove from map
 									int randomNumber = std::rand() % possibleTreasures.size();
@@ -283,7 +312,7 @@ int main() {
 									possibleTreasures.erase(possibleTreasures.begin() + randomNumber);
 								}
 								// Inspecting non-treasure (^)
-								else if (currentArea->charAt(currentRow, currentColumn) == '^') {
+								else if (inspectedChar == '^') {
 									foundSomething = true;
 
 									// If this coordinate hasn't been assigned yet, assign it
@@ -292,6 +321,17 @@ int main() {
 										assignedScenery[currentRow][currentColumn] = sceneryObjects[randomScenery];
 									}
 									std::cout << " - You investigate a strange object... You find " << assignedScenery[currentRow][currentColumn] << ".\n";
+								}
+								// Inspecting Deactivated Lever (\)
+								else if (inspectedChar == '|') {
+									foundSomething = true;
+									int doorId = currentArea->getDoorIndex(currentRow, currentColumn);
+									std::cout << " - There is closed door with the number " << doorId << " on it.\n";
+								}
+								// Inspecting a Lever ('\' or '/')
+								else if (inspectedChar == '\\' || inspectedChar == '/') {
+									foundSomething = true;
+									currentArea->toggleLever(currentRow, currentColumn);
 								}
 							}
 						}

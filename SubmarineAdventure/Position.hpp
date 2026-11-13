@@ -2,8 +2,30 @@
 
 #include "Submarine.hpp"
 
+#include <vector>
+
+struct Door {
+	int row;
+	int column;
+	int index;
+
+	Door(int r, int c, int i) : row(r), column(c), index(i) {}
+};
+
+struct Lever {
+	int row;
+	int column;
+	int index;
+	bool isActivated;
+
+	Lever(int r, int c, int i, bool a) : row(r), column(c), index(i), isActivated(a) {}
+};
+
 class Position {
 private:
+	std::vector<Lever> levers;
+	std::vector<Door> doors;
+
 	char levelArea[10][10];
 
 public:
@@ -19,4 +41,10 @@ public:
 	void displayLevelCamera(Submarine& s); //display 5x5 grid of level around submarine
 	char charAt(int row, int column); // return a char at a location
 	void setCharAt(int row, int column, char newChar); // set a char at a location
+	bool isObstacle(int row, int column); // return true if a location has an obstacle
+
+	void addDoor(int row, int column, int index);
+	void addLever(int row, int column, int index);
+	int getDoorIndex(int row, int column);
+	void toggleLever(int row, int column);
 };
