@@ -49,11 +49,23 @@ int main() {
 			Submarine s;
 
 			// Treasure objects
-			std::vector<Treasure> possibleTreasures = { Treasure("Gold Coin", 15),
-														Treasure("Silver Band", 5) ,
-														Treasure("Bejeweled Crown", 50) ,
+			std::vector<Treasure> possibleTreasures = { Treasure("Gold Coin", 35),
+														Treasure("Silver Band", 10) ,
+														Treasure("Bejeweled Crown", 80) ,
 														Treasure("Diamond of the Ocean", 100) ,
-														Treasure("Rock", 1) };
+														Treasure("Rock", 1),
+														Treasure("Ruby", 70),
+														Treasure("Amethyst", 60),
+														Treasure("Driftwood", 1),
+														Treasure("Broken Glasses", 1),
+														Treasure("Golden Chalice", 90),
+														Treasure("Copper Coins", 10),
+														Treasure("Ancient Helmet", 50),
+														Treasure("Gold Band", 30),
+														Treasure("Jade", 40),
+														Treasure("Iron Bar", 45),
+														Treasure("Treasure Chest", 250),
+														Treasure("Topaz", 35) };
 			// Submarine cargo
 			std::vector<Treasure> treasuresFound = { };
 
@@ -62,15 +74,24 @@ int main() {
 														"a rusted ship anchor",
 														"a bed of coral",
 														"some glowing underwater crystals",
-														"an empty diving suit" };
+														"an empty diving suit",
+														"a rusty bathtub",
+														"some shiny stones"};
 
 			// Keep track of which scenery spawned at each map coordinate
 			std::string assignedScenery[10][10];
 
+			// Door 1 & Lever 1
 			map[1][2].addDoor(4, 4, 1);
 			map[1][2].addDoor(5, 4, 1);
 			map[1][2].addDoor(6, 4, 1);
 			map[1][2].addLever(7, 6, 1);
+
+			// Door 2 & Lever 2
+			map[1][0].addDoor(6, 3, 2);
+			map[1][0].addDoor(7, 3, 2);
+			map[1][0].addDoor(8, 3, 2);
+			map[0][0].addLever(2, 1, 2);
 
 			currentArea->displayLevelCamera(s);
 			std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
