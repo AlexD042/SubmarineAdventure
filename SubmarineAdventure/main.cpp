@@ -91,7 +91,7 @@ int main() {
 			map[1][0].addDoor(6, 3, 2);
 			map[1][0].addDoor(7, 3, 2);
 			map[1][0].addDoor(8, 3, 2);
-			map[0][0].addLever(2, 1, 2);
+			map[1][0].addLever(2, 4, 2);
 
 			currentArea->displayLevelCamera(s);
 			std::cout << "Oxygen: " << s.getOxygen() << "/50\n\n";
